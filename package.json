@@ -1,0 +1,140 @@
+{
+  "name": "jsf-hjc",
+  "displayName": "JSF HJC (Hover/Jump/Colors)",
+  "description": "JSF EL colors, hover cards, and Ctrl+Click navigation for XHTML/HTML/XML.",
+  "version": "0.0.11",
+  "publisher": "jsf-hjc",
+  "license": "UNLICENSED",
+  "icon": "assets/icon.png",
+  "keywords": [
+    "jsf",
+    "jakarta-faces",
+    "xhtml",
+    "expression-language",
+    "java",
+    "hover",
+    "go-to-definition"
+  ],
+  "galleryBanner": {
+    "color": "#145ab4",
+    "theme": "light"
+  },
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage:html",
+    "onLanguage:xml",
+    "onCommand:jsf.hjc.refresh",
+    "onCommand:jsf.hjc.applyDefaultColors",
+    "onCommand:jsf.hjc.configureCustomColors",
+    "onCommand:jsf.hjc.disableColors"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "jsf.hjc.refresh",
+        "title": "JSF HJC: Refresh"
+      },
+      {
+        "command": "jsf.hjc.applyDefaultColors",
+        "title": "JSF HJC: Colors - Apply Default"
+      },
+      {
+        "command": "jsf.hjc.configureCustomColors",
+        "title": "JSF HJC: Colors - Configure Custom"
+      },
+      {
+        "command": "jsf.hjc.disableColors",
+        "title": "JSF HJC: Colors - Disable"
+      }
+    ],
+    "configuration": {
+      "title": "JSF HJC (Hover/Jump/Colors)",
+      "properties": {
+        "jsf.hjc.colorProfile": {
+          "type": "string",
+          "default": "default",
+          "enum": [
+            "default",
+            "custom",
+            "disabled"
+          ],
+          "description": "Color profile mode: default palette, custom palette, or disabled colors."
+        },
+        "jsf.hjc.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable color decorations. Hover and Ctrl+Click definition can stay enabled separately."
+        },
+        "jsf.hjc.foreground": {
+          "type": "string",
+          "default": "#1F1F1F",
+          "description": "Foreground color for EL expressions."
+        },
+        "jsf.hjc.background": {
+          "type": "string",
+          "default": "",
+          "description": "Optional background color for EL expressions. Leave empty for none."
+        },
+        "jsf.hjc.fontStyle": {
+          "type": "string",
+          "default": "normal",
+          "enum": [
+            "normal",
+            "italic",
+            "bold",
+            "underline"
+          ],
+          "description": "Font style for EL expressions."
+        },
+        "jsf.hjc.attributeHighlight.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable custom highlight for specific attribute names in XHTML/HTML/XML."
+        },
+        "jsf.hjc.attributeHighlight.names": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "description": "Attribute names to highlight."
+        },
+        "jsf.hjc.attributeHighlight.foreground": {
+          "type": "string",
+          "default": "#1F1F1F",
+          "description": "Foreground color for configured attribute names."
+        },
+        "jsf.hjc.hover.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show hover card for #{bean.member} expressions in XHTML/HTML/XML."
+        },
+        "jsf.hjc.hover.javaRootRelative": {
+          "type": "string",
+          "default": "src/main/java",
+          "description": "Java source root relative to workspace used to resolve managed beans (for example: src/main/java)."
+        },
+        "jsf.hjc.hover.cacheMs": {
+          "type": "number",
+          "default": 10000,
+          "minimum": 0,
+          "description": "Cache duration in milliseconds for bean index used by hover."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "package": "npx @vscode/vsce package --allow-missing-repository",
+    "publish": "npx @vscode/vsce publish --allow-missing-repository",
+    "publish:patch": "npx @vscode/vsce publish patch --allow-missing-repository",
+    "publish:minor": "npx @vscode/vsce publish minor --allow-missing-repository",
+    "publish:major": "npx @vscode/vsce publish major --allow-missing-repository"
+  }
+}
