@@ -5,6 +5,7 @@ Also supports highlighting selected attribute names and their values.
 Also adds hover cards over `#{bean.member}` with resolved Java class and method line.
 Supports `Ctrl+Click` (Go to Definition) from `#{bean.member}` to Java method/class.
 Includes color profiles: default, custom, disabled.
+default is good with theme default ligth+
 
 ## Local install
 
