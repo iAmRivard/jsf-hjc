@@ -15,8 +15,8 @@ default is good with theme default ligth+
 
 - `#{` -> suggests managed beans
 - `#{bean.` -> suggests bean properties/methods (from Java source)
-- `#{pl.` -> suggests row object members when `pl` comes from `var="pl"` (for example `p:dataTable`, `ui:repeat`)
-- `#{pl.idCliente.` -> supports nested property completion when the Java types can be resolved
+- `#{item.` -> suggests row object members when `item` comes from `var="item"` (for example `p:dataTable`, `ui:repeat`)
+- `#{item.customer.` -> supports nested property completion when the Java types can be resolved
 
 ### JSF/PrimeFaces markup completion
 
@@ -27,7 +27,7 @@ default is good with theme default ligth+
 
 ### Notes
 
-- For EL type-aware completion to work well, Java collections should use generics (example: `List<CrtPoliza>`).
+- For EL type-aware completion to work well, Java collections should use generics (example: `List<OrderItem>`).
 - Java source lookup uses `jsf.hjc.hover.javaRootRelative` (default: `src/main/java`).
 
 ## Local install
