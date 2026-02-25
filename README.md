@@ -7,6 +7,7 @@ Also adds JSF/PrimeFaces tag and attribute completion (`p:`, `h:`, `f:`, `ui:`) 
 Also adds hover cards over `#{bean.member}` with resolved Java class and method line.
 Supports `Ctrl+Click` (Go to Definition) from `#{bean.member}` to Java method/class.
 Includes color profiles: default, custom, disabled.
+default is good with theme default ligth+
 
 ## Autocompletion (Ctrl+Space)
 
