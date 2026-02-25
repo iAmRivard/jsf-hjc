@@ -1,8 +1,8 @@
 {
   "name": "jsf-hjc",
   "displayName": "JSF HJC (Hover/Jump/Colors)",
-  "description": "JSF EL colors, hover cards, and Ctrl+Click navigation for XHTML/HTML/XML.",
-  "version": "0.0.11",
+  "description": "JSF/PrimeFaces EL completion, colors, hover cards, and Ctrl+Click navigation for XHTML/HTML/XML.",
+  "version": "0.0.12",
   "publisher": "iamrivard",
   "license": "UNLICENSED",
   "icon": "assets/icon.png",
@@ -12,6 +12,8 @@
     "xhtml",
     "expression-language",
     "java",
+    "primefaces",
+    "autocomplete",
     "hover",
     "go-to-definition"
   ],
@@ -110,6 +112,11 @@
           "type": "string",
           "default": "#1F1F1F",
           "description": "Foreground color for configured attribute names."
+        },
+        "jsf.hjc.completion.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable JSF EL completion (Ctrl+Space) for #{bean} and #{bean.member} in XHTML/HTML/XML."
         },
         "jsf.hjc.hover.enabled": {
           "type": "boolean",

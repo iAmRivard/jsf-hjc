@@ -103,6 +103,159 @@ const DEFAULT_TEXTMATE_RULES = [
         settings: { foreground: "#808080", fontStyle: "italic" }
     }
 ];
+const JSF_COMPLETION_LIBRARIES = {
+    h: {
+        label: "JSF HTML",
+        tags: {
+            form: { attrs: ["id", "prependId", "style", "styleClass", "rendered"] },
+            panelGroup: { attrs: ["id", "layout", "style", "styleClass", "rendered"] },
+            outputText: { attrs: ["id", "value", "converter", "escape", "style", "styleClass", "rendered"] },
+            outputLabel: { attrs: ["for", "value", "style", "styleClass", "rendered"] },
+            inputText: { attrs: ["id", "value", "label", "required", "readonly", "disabled", "converter", "style", "styleClass", "rendered"] },
+            inputTextarea: { attrs: ["id", "value", "label", "required", "readonly", "disabled", "rows", "cols", "style", "styleClass", "rendered"] },
+            commandButton: { attrs: ["id", "value", "action", "actionListener", "immediate", "disabled", "style", "styleClass", "rendered"] },
+            selectOneMenu: { attrs: ["id", "value", "converter", "required", "disabled", "style", "styleClass", "rendered"] },
+            selectBooleanCheckbox: { attrs: ["id", "value", "disabled", "style", "styleClass", "rendered"] },
+            messages: { attrs: ["id", "globalOnly", "showDetail", "showSummary", "style", "styleClass", "rendered"] },
+            message: { attrs: ["for", "showDetail", "showSummary", "style", "styleClass", "rendered"] }
+        }
+    },
+    f: {
+        label: "JSF Core",
+        tags: {
+            ajax: { attrs: ["event", "execute", "render", "listener", "onevent", "onerror", "disabled", "immediate"] },
+            facet: { attrs: ["name"] },
+            convertNumber: { attrs: ["type", "currencySymbol", "currencyCode", "pattern", "minFractionDigits", "maxFractionDigits", "locale"] },
+            convertDateTime: { attrs: ["type", "pattern", "dateStyle", "timeStyle", "timeZone", "locale"] },
+            selectItem: { attrs: ["itemLabel", "itemValue", "itemDescription", "itemDisabled", "noSelectionOption"] },
+            selectItems: { attrs: ["value", "var", "itemLabel", "itemValue", "itemDescription", "itemDisabled"] },
+            attribute: { attrs: ["name", "value"] },
+            param: { attrs: ["name", "value", "disable"] },
+            viewParam: { attrs: ["name", "value", "required", "converter"] }
+        }
+    },
+    p: {
+        label: "PrimeFaces",
+        tags: {
+            dataTable: {
+                attrs: [
+                    "id", "value", "var", "rowKey", "selection", "selectionMode", "filteredValue", "sortBy", "filterBy",
+                    "paginator", "rows", "rowsPerPageTemplate", "emptyMessage", "lazy", "widgetVar", "rowIndexVar",
+                    "style", "styleClass", "rendered"
+                ]
+            },
+            column: {
+                attrs: [
+                    "id", "headerText", "footerText", "style", "styleClass", "filterBy", "filterMatchMode",
+                    "sortBy", "sortOrder", "rendered", "exportable", "width"
+                ]
+            },
+            commandButton: {
+                attrs: [
+                    "id", "value", "icon", "title", "action", "actionListener", "update", "process",
+                    "oncomplete", "onclick", "style", "styleClass", "rendered", "disabled", "immediate",
+                    "ajax", "global"
+                ]
+            },
+            dialog: {
+                attrs: [
+                    "id", "widgetVar", "header", "modal", "closable", "draggable", "resizable", "appendTo",
+                    "showEffect", "hideEffect", "width", "height", "responsive", "position", "style", "styleClass", "rendered"
+                ]
+            },
+            inputText: {
+                attrs: [
+                    "id", "value", "label", "required", "disabled", "readonly", "maxlength", "placeholder",
+                    "converter", "style", "styleClass", "rendered"
+                ]
+            },
+            inputTextarea: {
+                attrs: [
+                    "id", "value", "label", "required", "disabled", "readonly", "maxlength", "rows", "cols",
+                    "autoResize", "style", "styleClass", "rendered"
+                ]
+            },
+            selectOneMenu: {
+                attrs: [
+                    "id", "value", "converter", "required", "disabled", "filter", "filterMatchMode", "style",
+                    "styleClass", "panelStyle", "panelStyleClass", "rendered"
+                ]
+            },
+            ajax: { attrs: ["event", "listener", "update", "process", "oncomplete", "global", "async", "partialSubmit", "resetValues"] },
+            messages: { attrs: ["id", "showDetail", "showSummary", "closable", "autoUpdate", "style", "styleClass", "rendered"] },
+            message: { attrs: ["id", "for", "display", "showDetail", "showSummary", "style", "styleClass", "rendered"] }
+        }
+    },
+    ui: {
+        label: "Facelets UI",
+        tags: {
+            composition: { attrs: ["template"] },
+            define: { attrs: ["name"] },
+            insert: { attrs: ["name"] },
+            include: { attrs: ["src"] },
+            param: { attrs: ["name", "value"] },
+            repeat: { attrs: ["id", "value", "var", "varStatus", "offset", "size", "step"] },
+            fragment: { attrs: ["rendered"] },
+            decorate: { attrs: ["template"] }
+        }
+    }
+};
+const JSF_BOOLEAN_ATTRIBUTES = new Set([
+    "rendered",
+    "disabled",
+    "readonly",
+    "required",
+    "escape",
+    "paginator",
+    "lazy",
+    "global",
+    "ajax",
+    "modal",
+    "closable",
+    "draggable",
+    "resizable",
+    "responsive",
+    "autoresize",
+    "partialsubmit",
+    "resetvalues",
+    "showdetail",
+    "showsummary",
+    "autoupdate",
+    "immediate",
+    "exportable",
+    "prependid",
+    "filter"
+]);
+const JSF_ATTRIBUTE_VALUE_OPTIONS = {
+    "p:dataTable.selectionMode": ["single", "multiple"],
+    "p:column.filterMatchMode": ["contains", "startsWith", "endsWith", "exact", "equals", "lt", "lte", "gt", "gte", "in"],
+    "p:selectOneMenu.filterMatchMode": ["contains", "startsWith", "endsWith", "exact"],
+    "p:column.sortOrder": ["ascending", "descending", "unsorted"],
+    "p:dialog.position": ["center", "top", "bottom", "left", "right"],
+    "p:message.display": ["text", "icon", "both"],
+    "f:convertNumber.type": ["number", "currency", "percent"],
+    "f:convertDateTime.type": ["date", "time", "both", "localDate", "localTime", "localDateTime", "offsetTime", "offsetDateTime", "zonedDateTime"]
+};
+const JSF_EL_ATTRIBUTE_HINTS = new Set([
+    "value",
+    "rendered",
+    "rowkey",
+    "selection",
+    "filteredvalue",
+    "sortby",
+    "filterby",
+    "action",
+    "actionlistener",
+    "listener",
+    "converter",
+    "styleclass",
+    "label",
+    "disabled",
+    "readonly",
+    "required",
+    "for"
+]);
+const JSF_CLIENT_ID_KEYWORDS = ["@this", "@form", "@all", "@none", "@parent"];
 
 let elDecorationType = null;
 let attrDecorationType = null;
@@ -110,6 +263,12 @@ let attrDecorationType = null;
 // key: "<workspaceFsPath>|<javaRootRelative>"
 // value: { timestamp: number, index: Map<string, BeanEntry[]> }
 const beanIndexCache = new Map();
+// key: "<javaFilePath>|<mtimeMs>"
+// value: CompletionMemberEntry[]
+const beanMemberCache = new Map();
+// key: "<workspaceFsPath>|<javaRootRelative>"
+// value: { timestamp: number, index: Map<string, string[]> }
+const javaClassIndexCache = new Map();
 
 function getConfigValue(key, defaultValue) {
     const cfg = vscode.workspace.getConfiguration(CONFIG_NAMESPACE);
@@ -130,6 +289,7 @@ function getConfig() {
         attrEnabled: getConfigValue("attributeHighlight.enabled", false),
         attrForeground: useCustom ? getConfigValue("attributeHighlight.foreground", DEFAULT_ATTR_FOREGROUND) : DEFAULT_ATTR_FOREGROUND,
         attrNames: useCustom ? getConfigValue("attributeHighlight.names", DEFAULT_ATTR_NAMES) : DEFAULT_ATTR_NAMES,
+        completionEnabled: getConfigValue("completion.enabled", true),
         hoverEnabled: getConfigValue("hover.enabled", true),
         hoverJavaRootRelative: getConfigValue("hover.javaRootRelative", DEFAULT_JAVA_ROOT_RELATIVE),
         hoverCacheMs: getConfigValue("hover.cacheMs", 10000)
@@ -443,6 +603,8 @@ function refreshAllEditors() {
 
 function invalidateBeanCache() {
     beanIndexCache.clear();
+    beanMemberCache.clear();
+    javaClassIndexCache.clear();
 }
 
 function getClassName(content) {
@@ -592,6 +754,1318 @@ function resolveJavaRootRelative(workspacePath, configuredJavaRootRelative) {
     }
 
     return configured;
+}
+
+function getResolvedWorkspaceJavaRootInfo(document, config) {
+    const folder = vscode.workspace.getWorkspaceFolder(document.uri);
+    if (!folder) {
+        return null;
+    }
+
+    const workspacePath = folder.uri.fsPath;
+    const resolvedJavaRootRelative = resolveJavaRootRelative(workspacePath, config.hoverJavaRootRelative);
+    return {
+        workspacePath,
+        resolvedJavaRootRelative,
+        javaRootPath: path.join(workspacePath, resolvedJavaRootRelative)
+    };
+}
+
+function buildJavaClassIndex(workspacePath, javaRootRelative) {
+    const javaRoot = path.join(workspacePath, javaRootRelative);
+    const index = new Map();
+
+    if (!fs.existsSync(javaRoot)) {
+        return index;
+    }
+
+    const javaFiles = collectJavaFiles(javaRoot);
+    for (const filePath of javaFiles) {
+        let className = path.basename(filePath, JAVA_EXT);
+        try {
+            const content = fs.readFileSync(filePath, "utf8");
+            className = getClassName(content) || className;
+        } catch {
+            // Keep filename fallback.
+        }
+
+        const key = String(className).toLowerCase();
+        if (!index.has(key)) {
+            index.set(key, []);
+        }
+        index.get(key).push(filePath);
+    }
+
+    return index;
+}
+
+function getJavaClassIndexForDocument(document, config) {
+    const info = getResolvedWorkspaceJavaRootInfo(document, config);
+    if (!info) {
+        return new Map();
+    }
+
+    const cacheKey = `${info.workspacePath}|${info.resolvedJavaRootRelative}`;
+    const now = Date.now();
+    const cached = javaClassIndexCache.get(cacheKey);
+    if (cached && (now - cached.timestamp) <= config.hoverCacheMs) {
+        return cached.index;
+    }
+
+    const index = buildJavaClassIndex(info.workspacePath, info.resolvedJavaRootRelative);
+    javaClassIndexCache.set(cacheKey, { timestamp: now, index });
+    return index;
+}
+
+function stripJavaTypeDecorators(typeText) {
+    if (!typeText) {
+        return "";
+    }
+
+    let text = String(typeText)
+        .replace(/@\w+(?:\([^)]*\))?\s*/g, " ")
+        .replace(/\b(?:public|protected|private|static|final|abstract|native|synchronized|transient|volatile)\b/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+
+    // Remove generic method prefix like "<T extends Foo>"
+    if (text.startsWith("<")) {
+        let depth = 0;
+        let cut = -1;
+        for (let i = 0; i < text.length; i += 1) {
+            const ch = text[i];
+            if (ch === "<") {
+                depth += 1;
+            } else if (ch === ">") {
+                depth -= 1;
+                if (depth === 0) {
+                    cut = i + 1;
+                    break;
+                }
+            }
+        }
+        if (cut > 0) {
+            text = text.slice(cut).trim();
+        }
+    }
+
+    return text;
+}
+
+function splitTopLevelGenericArgs(typeText) {
+    const text = stripJavaTypeDecorators(typeText);
+    const start = text.indexOf("<");
+    if (start < 0) {
+        return [];
+    }
+
+    let depth = 0;
+    let end = -1;
+    for (let i = start; i < text.length; i += 1) {
+        const ch = text[i];
+        if (ch === "<") {
+            depth += 1;
+        } else if (ch === ">") {
+            depth -= 1;
+            if (depth === 0) {
+                end = i;
+                break;
+            }
+        }
+    }
+
+    if (end < 0) {
+        return [];
+    }
+
+    const inside = text.slice(start + 1, end).trim();
+    if (!inside) {
+        return [];
+    }
+
+    const args = [];
+    let current = "";
+    depth = 0;
+    for (let i = 0; i < inside.length; i += 1) {
+        const ch = inside[i];
+        if (ch === "<") {
+            depth += 1;
+            current += ch;
+        } else if (ch === ">") {
+            depth -= 1;
+            current += ch;
+        } else if (ch === "," && depth === 0) {
+            if (current.trim()) {
+                args.push(current.trim());
+            }
+            current = "";
+        } else {
+            current += ch;
+        }
+    }
+    if (current.trim()) {
+        args.push(current.trim());
+    }
+
+    return args;
+}
+
+function normalizeJavaTypeName(typeText) {
+    if (!typeText) {
+        return null;
+    }
+
+    let text = stripJavaTypeDecorators(typeText);
+    if (!text) {
+        return null;
+    }
+
+    text = text.replace(/\[\]/g, "").trim();
+
+    if (text.startsWith("?")) {
+        text = text
+            .replace(/^\?\s*(?:extends|super)\s+/, "")
+            .trim();
+    }
+
+    // Remove generic section, preserving outer type.
+    const genericStart = text.indexOf("<");
+    if (genericStart >= 0) {
+        text = text.slice(0, genericStart).trim();
+    }
+
+    if (!text) {
+        return null;
+    }
+
+    return text;
+}
+
+function getSimpleTypeName(typeName) {
+    if (!typeName) {
+        return null;
+    }
+    const normalized = String(typeName).trim();
+    if (!normalized) {
+        return null;
+    }
+    const lastDot = normalized.lastIndexOf(".");
+    return lastDot >= 0 ? normalized.slice(lastDot + 1) : normalized;
+}
+
+function isJavaCollectionLikeType(typeName) {
+    const simple = getSimpleTypeName(typeName);
+    if (!simple) {
+        return false;
+    }
+    return [
+        "List",
+        "ArrayList",
+        "LinkedList",
+        "Set",
+        "HashSet",
+        "LinkedHashSet",
+        "Collection",
+        "Iterable",
+        "Page",
+        "DataModel",
+        "Stream"
+    ].includes(simple);
+}
+
+function getJavaTypeInfo(typeText) {
+    const normalizedType = normalizeJavaTypeName(typeText);
+    const genericArgs = splitTopLevelGenericArgs(typeText);
+    let elementType = null;
+
+    if (String(typeText || "").includes("[]")) {
+        elementType = normalizeJavaTypeName(typeText);
+    } else if (normalizedType && isJavaCollectionLikeType(normalizedType) && genericArgs.length > 0) {
+        elementType = normalizeJavaTypeName(genericArgs[0]);
+    }
+
+    return {
+        typeText: stripJavaTypeDecorators(typeText),
+        normalizedType,
+        simpleTypeName: getSimpleTypeName(normalizedType),
+        elementTypeText: elementType,
+        elementSimpleTypeName: getSimpleTypeName(elementType)
+    };
+}
+
+function isBuiltinJavaType(typeName) {
+    const simple = getSimpleTypeName(typeName);
+    if (!simple) {
+        return true;
+    }
+
+    if ([
+        "void",
+        "boolean",
+        "byte",
+        "short",
+        "int",
+        "long",
+        "float",
+        "double",
+        "char",
+        "Boolean",
+        "Byte",
+        "Short",
+        "Integer",
+        "Long",
+        "Float",
+        "Double",
+        "Character",
+        "String",
+        "Object",
+        "BigDecimal",
+        "BigInteger",
+        "Date",
+        "LocalDate",
+        "LocalDateTime",
+        "LocalTime",
+        "OffsetDateTime",
+        "ZonedDateTime",
+        "Instant",
+        "UUID"
+    ].includes(simple)) {
+        return true;
+    }
+
+    const normalized = normalizeJavaTypeName(typeName);
+    return Boolean(normalized && normalized.startsWith("java."));
+}
+
+function findJavaClassFileByType(document, config, typeText) {
+    const typeInfo = getJavaTypeInfo(typeText);
+    const normalized = typeInfo.normalizedType;
+    const simple = typeInfo.simpleTypeName;
+    if (!normalized || !simple || isBuiltinJavaType(normalized)) {
+        return null;
+    }
+
+    const info = getResolvedWorkspaceJavaRootInfo(document, config);
+    if (!info) {
+        return null;
+    }
+
+    const classIndex = getJavaClassIndexForDocument(document, config);
+    const candidates = (classIndex.get(simple.toLowerCase()) || []).slice();
+    if (candidates.length === 0) {
+        return null;
+    }
+
+    if (normalized.includes(".")) {
+        const relativeSuffix = normalized.split(".").join(path.sep) + JAVA_EXT;
+        const exact = candidates.find((filePath) =>
+            filePath.toLowerCase().endsWith(relativeSuffix.toLowerCase())
+        );
+        if (exact) {
+            return exact;
+        }
+    }
+
+    candidates.sort((a, b) => a.length - b.length);
+    return candidates[0] || null;
+}
+
+function findMemberInfoByName(filePath, memberName) {
+    if (!filePath || !memberName) {
+        return null;
+    }
+
+    const normalizedName = String(memberName).replace(/\(\)$/, "");
+    const members = getBeanMembersForFile(filePath);
+    if (!Array.isArray(members) || members.length === 0) {
+        return null;
+    }
+
+    let exactProperty = null;
+    let exactField = null;
+    let exactMethod = null;
+
+    for (const member of members) {
+        if (member.label !== normalizedName) {
+            continue;
+        }
+        if (member.kind === "property" && !exactProperty) {
+            exactProperty = member;
+        } else if (member.kind === "field" && !exactField) {
+            exactField = member;
+        } else if (member.kind === "method" && !exactMethod) {
+            exactMethod = member;
+        }
+    }
+
+    return exactProperty || exactField || exactMethod || null;
+}
+
+function parseSimpleElPathSegments(expressionText) {
+    if (!expressionText) {
+        return null;
+    }
+
+    const raw = String(expressionText).trim().replace(/^#\{/, "").replace(/\}$/, "");
+    if (!raw) {
+        return null;
+    }
+
+    const segments = raw.split(".").map((part) => part.trim()).filter((part) => part.length > 0);
+    if (segments.length === 0) {
+        return null;
+    }
+
+    for (const segment of segments) {
+        if (!/^[A-Za-z_][A-Za-z0-9_]*(?:\(\))?$/.test(segment)) {
+            return null;
+        }
+    }
+
+    return segments;
+}
+
+function resolveElPathToJavaTypeTarget(document, config, pathSegments, options = {}) {
+    if (!Array.isArray(pathSegments) || pathSegments.length === 0) {
+        return null;
+    }
+
+    const rootName = String(pathSegments[0]).replace(/\(\)$/, "");
+    const rootEntries = getBeanEntriesForName(document, rootName, config);
+    if (rootEntries.length === 0) {
+        return null;
+    }
+
+    let currentFilePath = rootEntries[0].filePath;
+    let currentClassName = rootEntries[0].className;
+
+    for (let i = 1; i < pathSegments.length; i += 1) {
+        const segmentName = String(pathSegments[i]).replace(/\(\)$/, "");
+        const memberInfo = findMemberInfoByName(currentFilePath, segmentName);
+        if (!memberInfo) {
+            return null;
+        }
+
+        const useElementType = Boolean(options.useElementTypeOnFinalSegment && i === pathSegments.length - 1);
+        const nextTypeText = useElementType
+            ? (memberInfo.elementTypeText || memberInfo.typeText)
+            : memberInfo.typeText;
+
+        if (!nextTypeText) {
+            return null;
+        }
+
+        const nextFilePath = findJavaClassFileByType(document, config, nextTypeText);
+        if (!nextFilePath) {
+            return null;
+        }
+
+        currentFilePath = nextFilePath;
+        currentClassName = path.basename(nextFilePath, JAVA_EXT);
+    }
+
+    return {
+        filePath: currentFilePath,
+        className: currentClassName || path.basename(currentFilePath, JAVA_EXT)
+    };
+}
+
+function findTagEndIndex(text, startIndex) {
+    let quote = null;
+    for (let i = startIndex; i < text.length; i += 1) {
+        const ch = text[i];
+        if (quote) {
+            if (ch === quote) {
+                quote = null;
+            }
+            continue;
+        }
+        if (ch === "\"" || ch === "'") {
+            quote = ch;
+            continue;
+        }
+        if (ch === ">") {
+            return i;
+        }
+    }
+    return -1;
+}
+
+function parseTagAttributes(tagText) {
+    const attrs = new Map();
+    const tagNameMatch = tagText.match(/^<\s*([A-Za-z_][A-Za-z0-9_:\-.]*)/);
+    const tagName = tagNameMatch ? tagNameMatch[1] : null;
+
+    const attrRegex = /\b([A-Za-z_][A-Za-z0-9_:\-.]*)\s*=\s*(?:"([^"]*)"|'([^']*)')/g;
+    let match = attrRegex.exec(tagText);
+    while (match) {
+        attrs.set(match[1], match[2] !== undefined ? match[2] : match[3]);
+        match = attrRegex.exec(tagText);
+    }
+
+    return { tagName, attrs };
+}
+
+function getLocalVarBindingsBeforeOffset(document, offset) {
+    const text = document.getText().slice(0, Math.max(offset, 0));
+    const bindings = new Map();
+
+    let index = 0;
+    while (index < text.length) {
+        const start = text.indexOf("<", index);
+        if (start < 0) {
+            break;
+        }
+
+        const nextChar = text[start + 1];
+        if (nextChar === "/" || nextChar === "!" || nextChar === "?") {
+            index = start + 1;
+            continue;
+        }
+
+        const end = findTagEndIndex(text, start + 1);
+        if (end < 0) {
+            break;
+        }
+
+        const tagText = text.slice(start, end + 1);
+        const parsedTag = parseTagAttributes(tagText);
+        const varName = parsedTag.attrs.get("var");
+        const valueAttr = parsedTag.attrs.get("value");
+        if (typeof varName === "string" && typeof valueAttr === "string") {
+            const varTrimmed = varName.trim();
+            const valueTrimmed = valueAttr.trim();
+            const elMatch = valueTrimmed.match(/^#\{\s*([^}]+?)\s*\}$/);
+            if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(varTrimmed) && elMatch) {
+                bindings.set(varTrimmed, {
+                    varName: varTrimmed,
+                    valueExpression: elMatch[1].trim(),
+                    tagName: parsedTag.tagName || null
+                });
+            }
+        }
+
+        index = end + 1;
+    }
+
+    return bindings;
+}
+
+function resolveLocalVarTypeTarget(document, config, localVarName, offset) {
+    const bindings = getLocalVarBindingsBeforeOffset(document, offset);
+    const binding = bindings.get(localVarName);
+    if (!binding) {
+        return null;
+    }
+
+    const pathSegments = parseSimpleElPathSegments(binding.valueExpression);
+    if (!pathSegments || pathSegments.length === 0) {
+        return null;
+    }
+
+    return resolveElPathToJavaTypeTarget(document, config, pathSegments, { useElementTypeOnFinalSegment: true });
+}
+
+function resolveCompletionRootTypeTarget(document, config, rootIdentifier, offset) {
+    if (!rootIdentifier) {
+        return null;
+    }
+
+    // EL local vars (ui:repeat / p:dataTable var="x") should shadow managed beans.
+    const localTarget = resolveLocalVarTypeTarget(document, config, rootIdentifier, offset);
+    if (localTarget) {
+        return localTarget;
+    }
+
+    const beanEntries = getBeanEntriesForName(document, rootIdentifier, config);
+    if (beanEntries.length === 0) {
+        return null;
+    }
+
+    return {
+        filePath: beanEntries[0].filePath,
+        className: beanEntries[0].className
+    };
+}
+
+function getJsfTagMeta(tagName) {
+    if (typeof tagName !== "string") {
+        return null;
+    }
+
+    const parts = tagName.split(":");
+    if (parts.length !== 2) {
+        return null;
+    }
+
+    const [prefix, localName] = parts;
+    const lib = JSF_COMPLETION_LIBRARIES[prefix];
+    if (!lib) {
+        return null;
+    }
+
+    const tag = lib.tags[localName];
+    if (!tag) {
+        return null;
+    }
+
+    return {
+        prefix,
+        localName,
+        fullName: `${prefix}:${localName}`,
+        lib,
+        tag
+    };
+}
+
+function getAllJsfTagMetaEntries() {
+    const entries = [];
+    for (const [prefix, lib] of Object.entries(JSF_COMPLETION_LIBRARIES)) {
+        for (const [localName, tag] of Object.entries(lib.tags)) {
+            entries.push({
+                prefix,
+                localName,
+                fullName: `${prefix}:${localName}`,
+                lib,
+                tag
+            });
+        }
+    }
+    return entries;
+}
+
+function getUnclosedQuoteInfo(text) {
+    let openQuote = null;
+    let openQuoteIndex = -1;
+
+    for (let i = 0; i < text.length; i += 1) {
+        const ch = text[i];
+        if (openQuote) {
+            if (ch === openQuote) {
+                openQuote = null;
+                openQuoteIndex = -1;
+            }
+            continue;
+        }
+
+        if (ch === "\"" || ch === "'") {
+            openQuote = ch;
+            openQuoteIndex = i;
+        }
+    }
+
+    return openQuote ? { quote: openQuote, quoteStartIndex: openQuoteIndex } : null;
+}
+
+function extractJsfMarkupCompletionContext(document, position) {
+    const text = document.getText();
+    const offset = document.offsetAt(position);
+    const searchOffset = Math.max(offset - 1, 0);
+    const lastOpen = text.lastIndexOf("<", searchOffset);
+    if (lastOpen < 0) {
+        return null;
+    }
+
+    const lastClose = text.lastIndexOf(">", searchOffset);
+    if (lastClose > lastOpen) {
+        return null;
+    }
+
+    const tagPrefix = text.slice(lastOpen, offset);
+    if (!tagPrefix.startsWith("<")) {
+        return null;
+    }
+    if (tagPrefix.startsWith("<!--") || /^<\s*(?:!|\?)/.test(tagPrefix)) {
+        return null;
+    }
+
+    const quoteInfo = getUnclosedQuoteInfo(tagPrefix);
+    const tagNameMatch = tagPrefix.match(/^<\s*\/?\s*([A-Za-z_][A-Za-z0-9_:\-.]*)?/);
+    const parsedTagName = tagNameMatch && tagNameMatch[1] ? tagNameMatch[1] : null;
+
+    if (quoteInfo) {
+        const beforeQuote = tagPrefix.slice(0, quoteInfo.quoteStartIndex);
+        const valuePrefix = tagPrefix.slice(quoteInfo.quoteStartIndex + 1);
+        const attrMatch = beforeQuote.match(/([A-Za-z_][A-Za-z0-9_:\-.]*)\s*=\s*$/);
+        if (!attrMatch || !parsedTagName || tagPrefix.startsWith("</")) {
+            return null;
+        }
+
+        return {
+            kind: "attrValue",
+            tagName: parsedTagName,
+            attrName: attrMatch[1],
+            valuePrefix,
+            replaceRange: new vscode.Range(
+                document.positionAt(lastOpen + quoteInfo.quoteStartIndex + 1),
+                position
+            )
+        };
+    }
+
+    const tagNameCtxMatch = tagPrefix.match(/^<\s*\/?\s*([A-Za-z_][A-Za-z0-9_:\-.]*)?$/);
+    if (tagNameCtxMatch) {
+        const namePrefix = tagNameCtxMatch[1] || "";
+        return {
+            kind: "tagName",
+            namePrefix,
+            replaceRange: new vscode.Range(
+                document.positionAt(offset - namePrefix.length),
+                position
+            )
+        };
+    }
+
+    if (tagPrefix.startsWith("</") || !parsedTagName) {
+        return null;
+    }
+
+    if (/=\s*$/.test(tagPrefix)) {
+        return null;
+    }
+
+    const attrPrefixMatch = tagPrefix.match(/(?:\s+)([A-Za-z_][A-Za-z0-9_:\-.]*)?$/);
+    if (!attrPrefixMatch) {
+        return null;
+    }
+
+    const attrPrefix = attrPrefixMatch[1] || "";
+    const parsedAttrs = parseTagAttributes(`${tagPrefix}>`);
+    const existingAttrs = new Set(
+        [...parsedAttrs.attrs.keys()].map((name) => String(name).toLowerCase())
+    );
+
+    return {
+        kind: "attrName",
+        tagName: parsedTagName,
+        attrPrefix,
+        existingAttrs,
+        replaceRange: new vscode.Range(
+            document.positionAt(offset - attrPrefix.length),
+            position
+        )
+    };
+}
+
+function buildJsfTagCompletionItems(markupContext) {
+    const prefixText = String(markupContext.namePrefix || "").toLowerCase();
+    const items = [];
+
+    for (const entry of getAllJsfTagMetaEntries()) {
+        const fullLower = entry.fullName.toLowerCase();
+        const localLower = entry.localName.toLowerCase();
+        const prefixLower = entry.prefix.toLowerCase();
+
+        if (prefixText) {
+            const matches = fullLower.startsWith(prefixText) ||
+                localLower.startsWith(prefixText) ||
+                `${prefixLower}:`.startsWith(prefixText);
+            if (!matches) {
+                continue;
+            }
+        }
+
+        const item = new vscode.CompletionItem(entry.fullName, vscode.CompletionItemKind.Module);
+        item.detail = `${entry.lib.label} tag`;
+        if (Array.isArray(entry.tag.attrs) && entry.tag.attrs.length > 0) {
+            const preview = entry.tag.attrs.slice(0, 6).join(", ");
+            item.documentation = `Attrs: ${preview}${entry.tag.attrs.length > 6 ? ", ..." : ""}`;
+        }
+        item.insertText = entry.fullName;
+        item.range = markupContext.replaceRange;
+        item.commitCharacters = [" ", ">", "/"];
+        items.push(item);
+    }
+
+    items.sort((a, b) => String(a.label).localeCompare(String(b.label)));
+    return items;
+}
+
+function getJsfTagAttributeNames(tagName) {
+    const meta = getJsfTagMeta(tagName);
+    if (meta) {
+        return Array.isArray(meta.tag.attrs) ? meta.tag.attrs : [];
+    }
+
+    if (typeof tagName === "string" && tagName.includes(":")) {
+        const prefix = tagName.split(":")[0];
+        if (Object.prototype.hasOwnProperty.call(JSF_COMPLETION_LIBRARIES, prefix)) {
+            return ["id", "rendered", "style", "styleClass"];
+        }
+    }
+
+    return [];
+}
+
+function createAttrInsertSnippet(attrNameLower, attrName) {
+    if (JSF_BOOLEAN_ATTRIBUTES.has(attrNameLower)) {
+        return new vscode.SnippetString(`${attrName}="\${1|true,false|}"`);
+    }
+
+    if (JSF_EL_ATTRIBUTE_HINTS.has(attrNameLower)) {
+        if (attrNameLower === "action" || attrNameLower === "actionlistener" || attrNameLower === "listener") {
+            return new vscode.SnippetString(`${attrName}="#{\${1:bean}.\${2:method}}"`);
+        }
+        if (attrNameLower === "rendered") {
+            return new vscode.SnippetString(`${attrName}="#{not empty \${1:bean.value}}"`);
+        }
+        return new vscode.SnippetString(`${attrName}="#{\${1}}"`);
+    }
+
+    if (attrNameLower === "update" || attrNameLower === "process" || attrNameLower === "render" || attrNameLower === "execute") {
+        return new vscode.SnippetString(`${attrName}="\${1:@form}"`);
+    }
+
+    return new vscode.SnippetString(`${attrName}="\${1}"`);
+}
+
+function buildJsfAttributeNameCompletionItems(markupContext) {
+    const tagName = String(markupContext.tagName || "");
+    const attrPrefix = String(markupContext.attrPrefix || "").toLowerCase();
+    const currentAttrKey = String(markupContext.attrPrefix || "").toLowerCase();
+    const existingAttrs = markupContext.existingAttrs || new Set();
+    const items = [];
+
+    for (const attrName of getJsfTagAttributeNames(tagName)) {
+        const attrKey = String(attrName).toLowerCase();
+        if (attrPrefix && !attrKey.startsWith(attrPrefix)) {
+            continue;
+        }
+        if (existingAttrs.has(attrKey) && attrKey !== currentAttrKey) {
+            continue;
+        }
+
+        const item = new vscode.CompletionItem(attrName, vscode.CompletionItemKind.Property);
+        item.detail = `${tagName} attribute`;
+        item.insertText = createAttrInsertSnippet(attrKey, attrName);
+        item.range = markupContext.replaceRange;
+        item.commitCharacters = ["="];
+        items.push(item);
+    }
+
+    items.sort((a, b) => String(a.label).localeCompare(String(b.label)));
+    return items;
+}
+
+function addAttrValueCompletionItem(items, seen, label, kind, insertText, range, detail) {
+    const key = String(label).toLowerCase();
+    if (seen.has(key)) {
+        return;
+    }
+    seen.add(key);
+
+    const item = new vscode.CompletionItem(label, kind);
+    item.insertText = insertText;
+    item.range = range;
+    if (detail) {
+        item.detail = detail;
+    }
+    items.push(item);
+}
+
+function buildJsfAttributeValueCompletionItems(markupContext) {
+    const tagName = String(markupContext.tagName || "");
+    const attrName = String(markupContext.attrName || "");
+    const attrLower = attrName.toLowerCase();
+    const valuePrefix = String(markupContext.valuePrefix || "").toLowerCase();
+    const enumValues = JSF_ATTRIBUTE_VALUE_OPTIONS[`${tagName}.${attrName}`] || [];
+
+    const items = [];
+    const seen = new Set();
+
+    function matchesPrefix(label) {
+        return !valuePrefix || String(label).toLowerCase().startsWith(valuePrefix);
+    }
+
+    for (const value of enumValues) {
+        if (!matchesPrefix(value)) {
+            continue;
+        }
+        addAttrValueCompletionItem(
+            items,
+            seen,
+            value,
+            vscode.CompletionItemKind.EnumMember,
+            value,
+            markupContext.replaceRange,
+            `${tagName} ${attrName}`
+        );
+    }
+
+    if (JSF_BOOLEAN_ATTRIBUTES.has(attrLower)) {
+        for (const value of ["true", "false"]) {
+            if (!matchesPrefix(value)) {
+                continue;
+            }
+            addAttrValueCompletionItem(
+                items,
+                seen,
+                value,
+                vscode.CompletionItemKind.Value,
+                value,
+                markupContext.replaceRange,
+                "Boolean value"
+            );
+        }
+    }
+
+    if (attrLower === "update" || attrLower === "process" || attrLower === "render" || attrLower === "execute") {
+        for (const value of JSF_CLIENT_ID_KEYWORDS) {
+            if (!matchesPrefix(value)) {
+                continue;
+            }
+            addAttrValueCompletionItem(
+                items,
+                seen,
+                value,
+                vscode.CompletionItemKind.Keyword,
+                value,
+                markupContext.replaceRange,
+                "JSF client id keyword"
+            );
+        }
+    }
+
+    if (attrLower === "var") {
+        for (const value of ["item", "row", "it"]) {
+            if (!matchesPrefix(value)) {
+                continue;
+            }
+            addAttrValueCompletionItem(
+                items,
+                seen,
+                value,
+                vscode.CompletionItemKind.Variable,
+                value,
+                markupContext.replaceRange,
+                "Loop row variable"
+            );
+        }
+    }
+
+    if (JSF_EL_ATTRIBUTE_HINTS.has(attrLower)) {
+        const snippets = [];
+        if (attrLower === "action" || attrLower === "actionlistener" || attrLower === "listener") {
+            snippets.push({
+                label: "#{bean.method}",
+                insertText: new vscode.SnippetString(`#{\${1:bean}.\${2:method}}`),
+                detail: "EL method expression"
+            });
+        } else if (attrLower === "rendered") {
+            snippets.push({
+                label: "#{not empty ...}",
+                insertText: new vscode.SnippetString(`#{not empty \${1:bean.value}}`),
+                detail: "EL rendered condition"
+            });
+            snippets.push({
+                label: "#{...}",
+                insertText: new vscode.SnippetString(`#{\${1}}`),
+                detail: "EL expression"
+            });
+        } else {
+            snippets.push({
+                label: "#{...}",
+                insertText: new vscode.SnippetString(`#{\${1}}`),
+                detail: "EL expression"
+            });
+        }
+
+        for (const snippet of snippets) {
+            if (!matchesPrefix(snippet.label) && !(valuePrefix === "#" && snippet.label.startsWith("#"))) {
+                continue;
+            }
+            addAttrValueCompletionItem(
+                items,
+                seen,
+                snippet.label,
+                vscode.CompletionItemKind.Snippet,
+                snippet.insertText,
+                markupContext.replaceRange,
+                snippet.detail
+            );
+        }
+    }
+
+    if (items.length === 0 && (!valuePrefix || "#".startsWith(valuePrefix))) {
+        addAttrValueCompletionItem(
+            items,
+            seen,
+            "#{...}",
+            vscode.CompletionItemKind.Snippet,
+            new vscode.SnippetString(`#{\${1}}`),
+            markupContext.replaceRange,
+            "EL expression"
+        );
+    }
+
+    return items;
+}
+
+function buildJsfMarkupCompletionItems(document, position) {
+    const markupContext = extractJsfMarkupCompletionContext(document, position);
+    if (!markupContext) {
+        return [];
+    }
+
+    if (markupContext.kind === "tagName") {
+        return buildJsfTagCompletionItems(markupContext);
+    }
+    if (markupContext.kind === "attrName") {
+        return buildJsfAttributeNameCompletionItems(markupContext);
+    }
+    if (markupContext.kind === "attrValue") {
+        return buildJsfAttributeValueCompletionItems(markupContext);
+    }
+
+    return [];
+}
+
+function getBeanEntriesForName(document, beanName, config) {
+    if (!beanName) {
+        return [];
+    }
+
+    const index = getBeanIndexForDocument(document, config);
+    const entries = (index.get(String(beanName).toLowerCase()) || []).slice();
+    entries.sort((a, b) => a.filePath.length - b.filePath.length);
+    return entries;
+}
+
+function toPropertyNameFromAccessor(methodName) {
+    if (/^get[A-Z]/.test(methodName) && methodName.length > 3) {
+        return methodName[3].toLowerCase() + methodName.slice(4);
+    }
+    if (/^is[A-Z]/.test(methodName) && methodName.length > 2) {
+        return methodName[2].toLowerCase() + methodName.slice(3);
+    }
+    return null;
+}
+
+function getBeanMembersForFile(filePath) {
+    let stat;
+    try {
+        stat = fs.statSync(filePath);
+    } catch {
+        return [];
+    }
+
+    const cacheKey = `${filePath}|${stat.mtimeMs}`;
+    const cached = beanMemberCache.get(cacheKey);
+    if (cached) {
+        return cached;
+    }
+
+    let content = "";
+    try {
+        content = fs.readFileSync(filePath, "utf8");
+    } catch {
+        return [];
+    }
+
+    const className = getClassName(content);
+    const members = [];
+    const seen = new Set();
+
+    function addMember(member) {
+        const key = `${member.kind}|${member.label}`;
+        if (seen.has(key)) {
+            return;
+        }
+        seen.add(key);
+        members.push(member);
+    }
+
+    const methodRegex = /^\s*(?:public|protected|private)?\s*(?:static\s+)?(?:final\s+)?(?:synchronized\s+)?(?:native\s+)?(?:abstract\s+)?(?:<[^>{}\n]+>\s*)?([\w$<>\[\],.?@ ]+?)\s+([A-Za-z_][A-Za-z0-9_]*)\s*\(([^)]*)\)\s*(?:throws[^{;\n]+)?\s*\{/gm;
+    let methodMatch = methodRegex.exec(content);
+    while (methodMatch) {
+        const returnTypeText = (methodMatch[1] || "").trim();
+        const methodName = methodMatch[2];
+        const paramsRaw = (methodMatch[3] || "").trim();
+        const hasParams = paramsRaw.length > 0;
+        const methodTypeInfo = getJavaTypeInfo(returnTypeText);
+
+        if (className && methodName === className) {
+            methodMatch = methodRegex.exec(content);
+            continue;
+        }
+
+        if (methodName !== "hashCode" && methodName !== "toString" && methodName !== "equals") {
+            addMember({
+                label: methodName,
+                kind: "method",
+                insertText: hasParams ? methodName : `${methodName}()`,
+                detail: hasParams ? "Java method (params)" : "Java method",
+                typeText: methodTypeInfo.typeText || returnTypeText || null,
+                elementTypeText: methodTypeInfo.elementTypeText || null
+            });
+        }
+
+        if (!hasParams) {
+            const propertyName = toPropertyNameFromAccessor(methodName);
+            if (propertyName) {
+                addMember({
+                    label: propertyName,
+                    kind: "property",
+                    insertText: propertyName,
+                    detail: `Property from ${methodName}()`,
+                    typeText: methodTypeInfo.typeText || returnTypeText || null,
+                    elementTypeText: methodTypeInfo.elementTypeText || null
+                });
+            }
+        }
+
+        methodMatch = methodRegex.exec(content);
+    }
+
+    const fieldRegex = /^\s*(?:public|protected)\s+(?:static\s+)?(?:final\s+)?([\w$<>\[\],.?@ ]+?)\s+([A-Za-z_][A-Za-z0-9_]*)\s*(?:=[^;]*)?;/gm;
+    let fieldMatch = fieldRegex.exec(content);
+    while (fieldMatch) {
+        const fieldTypeText = (fieldMatch[1] || "").trim();
+        const fieldName = fieldMatch[2];
+        const fieldTypeInfo = getJavaTypeInfo(fieldTypeText);
+        addMember({
+            label: fieldName,
+            kind: "field",
+            insertText: fieldName,
+            detail: "Java field",
+            typeText: fieldTypeInfo.typeText || fieldTypeText || null,
+            elementTypeText: fieldTypeInfo.elementTypeText || null
+        });
+        fieldMatch = fieldRegex.exec(content);
+    }
+
+    beanMemberCache.set(cacheKey, members);
+    return members;
+}
+
+function stripElCallSuffix(segment) {
+    return String(segment || "").replace(/\(\)$/, "");
+}
+
+function extractElCompletionContext(document, position) {
+    const lineText = document.lineAt(position.line).text;
+    const linePrefix = lineText.slice(0, position.character);
+    const openIndex = linePrefix.lastIndexOf("#{");
+    if (openIndex < 0) {
+        return null;
+    }
+
+    const closeIndex = linePrefix.lastIndexOf("}");
+    if (closeIndex > openIndex) {
+        return null;
+    }
+
+    const exprPrefix = linePrefix.slice(openIndex + 2);
+    if (exprPrefix.length === 0) {
+        return {
+            mode: "root",
+            rootPrefix: "",
+            replaceRange: new vscode.Range(position, position)
+        };
+    }
+
+    if (!/^[A-Za-z0-9_$.()]*$/.test(exprPrefix)) {
+        return null;
+    }
+
+    const rawSegments = exprPrefix.split(".");
+    if (rawSegments.length === 0) {
+        return null;
+    }
+
+    for (let i = 0; i < rawSegments.length; i += 1) {
+        const segment = rawSegments[i];
+        const isLast = i === rawSegments.length - 1;
+        if (segment.length === 0) {
+            if (!isLast) {
+                return null;
+            }
+            continue;
+        }
+        if (!/^[A-Za-z_][A-Za-z0-9_]*(?:\(\))?$/.test(segment)) {
+            return null;
+        }
+    }
+
+    const elStartChar = openIndex + 2;
+    if (rawSegments.length === 1) {
+        const rootPrefix = rawSegments[0];
+        if (rootPrefix.includes("(")) {
+            return null;
+        }
+        return {
+            mode: "root",
+            rootPrefix,
+            replaceRange: new vscode.Range(
+                new vscode.Position(position.line, elStartChar),
+                position
+            )
+        };
+    }
+
+    const rootIdentifier = stripElCallSuffix(rawSegments[0]);
+    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(rootIdentifier)) {
+        return null;
+    }
+
+    const currentSegmentRaw = rawSegments[rawSegments.length - 1];
+    const memberPrefix = stripElCallSuffix(currentSegmentRaw);
+    if (currentSegmentRaw.includes("(") && !currentSegmentRaw.endsWith("()")) {
+        return null;
+    }
+
+    const chainSegments = rawSegments.slice(1, -1).map(stripElCallSuffix);
+    if (chainSegments.some((segment) => !/^[A-Za-z_][A-Za-z0-9_]*$/.test(segment))) {
+        return null;
+    }
+
+    const lastDotIndex = exprPrefix.lastIndexOf(".");
+    const memberStartChar = elStartChar + lastDotIndex + 1;
+    return {
+        mode: "path",
+        rootIdentifier,
+        chainSegments,
+        memberPrefix,
+        replaceRange: new vscode.Range(
+            new vscode.Position(position.line, memberStartChar),
+            position
+        )
+    };
+}
+
+function buildRootCompletionItems(document, config, completionContext, offset) {
+    const prefix = String(completionContext.rootPrefix || "").toLowerCase();
+    const items = [];
+    const seen = new Set();
+
+    const localBindings = getLocalVarBindingsBeforeOffset(document, offset);
+    for (const binding of localBindings.values()) {
+        const label = binding.varName;
+        const key = label.toLowerCase();
+        if (seen.has(key)) {
+            continue;
+        }
+        if (prefix && !key.startsWith(prefix)) {
+            continue;
+        }
+        seen.add(key);
+
+        const item = new vscode.CompletionItem(label, vscode.CompletionItemKind.Variable);
+        item.detail = `JSF var (${binding.tagName || "tag"})`;
+        item.documentation = `#{${binding.valueExpression}}`;
+        item.insertText = label;
+        item.range = completionContext.replaceRange;
+        item.commitCharacters = ["."];
+        items.push(item);
+    }
+
+    const index = getBeanIndexForDocument(document, config);
+    for (const entries of index.values()) {
+        for (const entry of entries) {
+            const beanLabel = String(entry.beanName || "");
+            if (!beanLabel) {
+                continue;
+            }
+            const beanKey = beanLabel.toLowerCase();
+            if (seen.has(beanKey)) {
+                continue;
+            }
+            if (prefix && !beanKey.startsWith(prefix)) {
+                continue;
+            }
+            seen.add(beanKey);
+
+            const item = new vscode.CompletionItem(beanLabel, vscode.CompletionItemKind.Variable);
+            item.detail = `${entry.className} (JSF bean)`;
+            item.documentation = formatPathForWorkspace(document, entry.filePath);
+            item.insertText = beanLabel;
+            item.range = completionContext.replaceRange;
+            item.commitCharacters = ["."];
+            items.push(item);
+        }
+    }
+
+    items.sort((a, b) => String(a.label).localeCompare(String(b.label)));
+    return items;
+}
+
+function resolvePathCompletionTarget(document, config, completionContext, offset) {
+    const rootTarget = resolveCompletionRootTypeTarget(document, config, completionContext.rootIdentifier, offset);
+    if (!rootTarget) {
+        return null;
+    }
+
+    let currentFilePath = rootTarget.filePath;
+    let currentClassName = rootTarget.className || path.basename(rootTarget.filePath, JAVA_EXT);
+
+    for (const segment of completionContext.chainSegments) {
+        const memberInfo = findMemberInfoByName(currentFilePath, segment);
+        if (!memberInfo || !memberInfo.typeText) {
+            return null;
+        }
+
+        const nextFilePath = findJavaClassFileByType(document, config, memberInfo.typeText);
+        if (!nextFilePath) {
+            return null;
+        }
+
+        currentFilePath = nextFilePath;
+        currentClassName = path.basename(nextFilePath, JAVA_EXT);
+    }
+
+    return {
+        filePath: currentFilePath,
+        className: currentClassName
+    };
+}
+
+function buildPathMemberCompletionItems(document, config, completionContext, offset) {
+    const prefix = String(completionContext.memberPrefix || "").toLowerCase();
+    const target = resolvePathCompletionTarget(document, config, completionContext, offset);
+    if (!target) {
+        return [];
+    }
+
+    const items = [];
+    const seen = new Set();
+    const members = getBeanMembersForFile(target.filePath);
+    for (const member of members) {
+        const label = String(member.label || "");
+        if (!label) {
+            continue;
+        }
+        const labelLower = label.toLowerCase();
+        const memberKey = `${member.kind}|${labelLower}`;
+        if (seen.has(memberKey)) {
+            continue;
+        }
+        if (prefix && !labelLower.startsWith(prefix)) {
+            continue;
+        }
+        seen.add(memberKey);
+
+        let kind = vscode.CompletionItemKind.Property;
+        if (member.kind === "method") {
+            kind = vscode.CompletionItemKind.Method;
+        } else if (member.kind === "field") {
+            kind = vscode.CompletionItemKind.Field;
+        }
+
+        const item = new vscode.CompletionItem(label, kind);
+        item.detail = `${member.detail} - ${target.className}`;
+        item.documentation = formatPathForWorkspace(document, target.filePath);
+        item.insertText = member.insertText || label;
+        item.range = completionContext.replaceRange;
+        items.push(item);
+    }
+
+    items.sort((a, b) => {
+        if (a.kind !== b.kind) {
+            return a.kind - b.kind;
+        }
+        return String(a.label).localeCompare(String(b.label));
+    });
+    return items;
 }
 
 function getBeanIndexForDocument(document, config) {
@@ -795,6 +2269,34 @@ function provideDefinition(document, position) {
     return new vscode.Location(uri, pos);
 }
 
+function provideCompletionItems(document, position) {
+    const config = getConfig();
+    if (!config.completionEnabled || !isTargetDocument(document)) {
+        return null;
+    }
+
+    const offset = document.offsetAt(position);
+    const completionContext = extractElCompletionContext(document, position);
+    if (completionContext) {
+        if (completionContext.mode === "root") {
+            const rootItems = buildRootCompletionItems(document, config, completionContext, offset);
+            if (rootItems.length > 0) {
+                return new vscode.CompletionList(rootItems, false);
+            }
+        }
+
+        if (completionContext.mode === "path") {
+            const memberItems = buildPathMemberCompletionItems(document, config, completionContext, offset);
+            if (memberItems.length > 0) {
+                return new vscode.CompletionList(memberItems, false);
+            }
+        }
+    }
+
+    const markupItems = buildJsfMarkupCompletionItems(document, position);
+    return markupItems.length > 0 ? new vscode.CompletionList(markupItems, false) : null;
+}
+
 async function activate(context) {
     ensureDecorationType();
     refreshAllEditors();
@@ -842,6 +2344,18 @@ async function activate(context) {
         vscode.languages.registerDefinitionProvider(
             [{ language: "html", scheme: "file" }, { language: "xml", scheme: "file" }],
             { provideDefinition }
+        )
+    );
+
+    context.subscriptions.push(
+        vscode.languages.registerCompletionItemProvider(
+            [{ language: "html", scheme: "file" }, { language: "xml", scheme: "file" }],
+            { provideCompletionItems },
+            "#",
+            "{",
+            ".",
+            "<",
+            ":"
         )
     );
 
